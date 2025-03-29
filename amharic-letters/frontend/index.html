@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Amharic Letters</title>
+    <link rel="stylesheet" href="styles/style.css" />
+  </head>
+  <body>
+    <div class="container">
+      <div class="wrapper">
+        <h3>Write the Amharic Letter</h3>
+      </div>
+
+      <div class="wrapper">
+        <label for="amharic-dropdown">Choose a Letter:</label>
+        <select id="amharic-dropdown"></select>
+      </div>
+      <div class="wrapper canvas-wrapper">
+        <canvas id="canvas" width="280" height="280"></canvas>
+      </div>
+      <div class="wrapper buttons">
+        <button class="clear" onclick="clearCanvas()">Clear</button>
+        <button class="submit" onclick="saveLetter()">Submit</button>
+      </div>
+    </div>
+
+    <script src="scripts/script.js"></script>
+  </body>
+</html>
