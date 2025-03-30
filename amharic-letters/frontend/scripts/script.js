@@ -17,32 +17,44 @@ async function loadAmharicCharacters(dropdownId) {
     if (!apiUrl) {
       throw new Error("API URL could not be retrieved.");
     }
+    // Show loading indicator
+    dropdown.innerHTML = '<option>Loading...</option>';
+    dropdown.disabled = true;
+
     fetch(`${apiUrl}/api/letter/grouped-by-family`, {
       method: "GET",
       headers: {
-        "Content-Type": "application/json",
+      "Content-Type": "application/json",
       },
     })
       .then((response) => {
-        if (!response.ok) {
-          throw new Error(`API request failed with status ${response.status}`);
-        }
-        return response.json();
+      if (!response.ok) {
+        throw new Error(`API request failed with status ${response.status}`);
+      }
+      return response.json();
       })
       .then((data) => {
-        data.data.forEach((group) => {
-          group.letters.forEach((letter) => {
-            const option = document.createElement("option");
-            option.value = letter.name;
-            option.textContent = letter.name;
-            option.dataset.position = letter.position;
-            option.dataset.family = letter.family;
-            option.dataset.rank = letter.rank;
-            option.dataset.position = letter.position;
-            option.dataset.translation = letter.translation;
-            dropdown.appendChild(option);
-          });
+      // Clear the loading indicator
+      dropdown.innerHTML = '';
+      dropdown.disabled = false;
+
+      data.data.forEach((group) => {
+        group.letters.forEach((letter) => {
+        const option = document.createElement("option");
+        option.value = letter.name;
+        option.textContent = letter.name;
+        option.dataset.position = letter.position;
+        option.dataset.family = letter.family;
+        option.dataset.rank = letter.rank;
+        option.dataset.position = letter.position;
+        option.dataset.translation = letter.translation;
+        dropdown.appendChild(option);
         });
+      });
+      })
+      .catch((error) => {
+      console.error("Error fetching grouped letters:", error);
+      dropdown.innerHTML = '<option>Error loading options</option>';
       });
   } catch (error) {
     console.error("Error fetching grouped letters:", error);
@@ -178,3 +190,26 @@ canvas.addEventListener("touchstart", startDrawing);
 canvas.addEventListener("touchmove", draw);
 canvas.addEventListener("touchend", stopDrawing);
 canvas.addEventListener("touchcancel", stopDrawing);
+
+const submitButton = document.getElementById("submit-button");
+const dropdown = document.getElementById("amharic-dropdown");
+
+if (submitButton && dropdown) {
+  const toggleSubmitButton = () => {
+    submitButton.disabled = dropdown.disabled;
+    if (submitButton.disabled) {
+      submitButton.style.cursor = "not-allowed";
+      submitButton.style.backgroundColor = "#d3d3d3";
+    } else {
+      submitButton.style.cursor = "pointer";
+      submitButton.style.backgroundColor = "";
+    }
+  };
+
+  // Initial state
+  toggleSubmitButton();
+
+  // Observe changes to the dropdown's disabled property
+  const observer = new MutationObserver(toggleSubmitButton);
+  observer.observe(dropdown, { attributes: true, attributeFilter: ["disabled"] });
+}
