@@ -18,43 +18,43 @@ async function loadAmharicCharacters(dropdownId) {
       throw new Error("API URL could not be retrieved.");
     }
     // Show loading indicator
-    dropdown.innerHTML = '<option>Loading...</option>';
+    dropdown.innerHTML = "<option>Loading...</option>";
     dropdown.disabled = true;
 
     fetch(`${apiUrl}/api/letter/grouped-by-family`, {
       method: "GET",
       headers: {
-      "Content-Type": "application/json",
+        "Content-Type": "application/json",
       },
     })
       .then((response) => {
-      if (!response.ok) {
-        throw new Error(`API request failed with status ${response.status}`);
-      }
-      return response.json();
+        if (!response.ok) {
+          throw new Error(`API request failed with status ${response.status}`);
+        }
+        return response.json();
       })
       .then((data) => {
-      // Clear the loading indicator
-      dropdown.innerHTML = '';
-      dropdown.disabled = false;
+        // Clear the loading indicator
+        dropdown.innerHTML = "";
+        dropdown.disabled = false;
 
-      data.data.forEach((group) => {
-        group.letters.forEach((letter) => {
-        const option = document.createElement("option");
-        option.value = letter.name;
-        option.textContent = letter.name;
-        option.dataset.position = letter.position;
-        option.dataset.family = letter.family;
-        option.dataset.rank = letter.rank;
-        option.dataset.position = letter.position;
-        option.dataset.translation = letter.translation;
-        dropdown.appendChild(option);
+        data.data.forEach((group) => {
+          group.letters.forEach((letter) => {
+            const option = document.createElement("option");
+            option.value = letter.name;
+            option.textContent = letter.name;
+            option.dataset.position = letter.position;
+            option.dataset.family = letter.family;
+            option.dataset.rank = letter.rank;
+            option.dataset.position = letter.position;
+            option.dataset.translation = letter.translation;
+            dropdown.appendChild(option);
+          });
         });
-      });
       })
       .catch((error) => {
-      console.error("Error fetching grouped letters:", error);
-      dropdown.innerHTML = '<option>Error loading options</option>';
+        console.error("Error fetching grouped letters:", error);
+        dropdown.innerHTML = "<option>Error loading options</option>";
       });
   } catch (error) {
     console.error("Error fetching grouped letters:", error);
@@ -131,15 +131,43 @@ async function saveLetter() {
         "Content-Type": "application/json",
       },
       body: JSON.stringify(metadata), // Send data
-    }).then((response) => {
-      if (!response.ok) {
-        throw new Error(`API request failed with status ${response.status}`);
-      }
-      return response.json();
-    });
+    })
+      .then((response) => {
+        if (!response.ok) {
+          const errorMessage = document.getElementById("error-message");
+          errorMessage.textContent = "Error. Please try again.";
+          errorMessage.style.opacity = 1;
+          setTimeout(() => {
+            errorMessage.style.opacity = 0;
+          }, 1000);
+          throw new Error(`API request failed with status ${response.status}`);
+        }
+        return response.json();
+      })
+      .then((data) => {
+        const successMessage = document.getElementById("success-message");
+        successMessage.textContent = "Success!";
+        successMessage.style.opacity = 1;
+        setTimeout(() => {
+          successMessage.style.opacity = 0;
+        }, 1000);
+      })
+      .catch((error) => {
+        const errorMessage = document.getElementById("error-message");
+        errorMessage.textContent = "Error. Please try again.";
+        errorMessage.style.opacity = 1;
+        setTimeout(() => {
+          errorMessage.style.opacity = 0;
+        }, 1000);
+      });
     clearCanvas();
   } catch {
-    (error) => console.error("Error sending data:", error.message);
+    const errorMessage = document.getElementById("error-message");
+    errorMessage.textContent = "Error. Please try again.";
+    errorMessage.style.opacity = 1;
+    setTimeout(() => {
+      errorMessage.style.opacity = 0;
+    }, 1000);
   }
 }
 
@@ -211,5 +239,8 @@ if (submitButton && dropdown) {
 
   // Observe changes to the dropdown's disabled property
   const observer = new MutationObserver(toggleSubmitButton);
-  observer.observe(dropdown, { attributes: true, attributeFilter: ["disabled"] });
+  observer.observe(dropdown, {
+    attributes: true,
+    attributeFilter: ["disabled"],
+  });
 }

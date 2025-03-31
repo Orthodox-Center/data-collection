@@ -62,3 +62,23 @@ button:active {
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
     opacity: 0.9;
 }
+
+.success-message:empty, .error-message:empty {
+    display: none;
+}
+
+.success-message {
+    background-color: #4CAF50;
+    color: white;
+    padding: 10px;
+    border-radius: 4px;
+    margin-top: 10px;
+}
+
+.error-message {
+    background-color: #f44336;
+    color: white;
+    padding: 10px;
+    border-radius: 4px;
+    margin-top: 10px;
+}
